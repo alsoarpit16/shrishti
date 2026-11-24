@@ -16,15 +16,17 @@ setTimeout(function () { var l = document.getElementById('gfonts'); if (l && !l.
     --w: min(84vw, 360px);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; overflow: hidden; }
+  html, body { height: 100%; overflow: hidden; overscroll-behavior: none; touch-action: manipulation; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   body {
     background: #0b0610;
     font-family: 'Quicksand', system-ui, sans-serif;
     color: var(--ink);
     -webkit-tap-highlight-color: transparent;
-    user-select: none;
+    -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
   }
   .heart-svg { display: block; width: 100%; height: 100%; }
+  img, video, svg { -webkit-user-drag: none; -webkit-touch-callout: none; }
   .layer { position: absolute; inset: 0; pointer-events: none; }
 
   .scene {
@@ -426,10 +428,10 @@ setTimeout(function () { var l = document.getElementById('gfonts'); if (l && !l.
   .sky { position: absolute; inset: 0; background: linear-gradient(to bottom, #78aef0 0%, #a9c7f4 26%, #dcd6f3 46%, #ffe2d6 60%, #fff0e2 70%); }
   .sun { position: absolute; left: 80%; top: 20%; width: 60vmin; height: 60vmin; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle, #fffdf4 0, #fff3cf 14%, rgba(255,232,196,.55) 32%, rgba(255,220,190,0) 62%); animation: breathe 7s ease-in-out infinite; }
   .sunrays {
-    position: absolute; left: 80%; top: 20%; width: 220vmax; height: 220vmax; margin: -110vmax 0 0 -110vmax;
+    position: absolute; left: 80%; top: 20%; width: 104vmax; height: 104vmax; margin: -52vmax 0 0 -52vmax;   /* only the inner ~50vmax ever shows, so the box is just that big */
     background: repeating-conic-gradient(from 0deg, rgba(255,250,235,.32) 0deg 3deg, transparent 3deg 11deg);
-    -webkit-mask-image: radial-gradient(circle closest-side, #000 0%, rgba(0,0,0,.45) 18%, transparent 46%);
-    mask-image: radial-gradient(circle closest-side, #000 0%, rgba(0,0,0,.45) 18%, transparent 46%);
+    -webkit-mask-image: radial-gradient(circle 52vmax at 50% 50%, #000 0, rgba(0,0,0,.45) 19.8vmax, transparent 50.6vmax);
+    mask-image: radial-gradient(circle 52vmax at 50% 50%, #000 0, rgba(0,0,0,.45) 19.8vmax, transparent 50.6vmax);
     animation: spin 220s linear infinite;
   }
   .land { position: absolute; left: -4%; top: -4%; width: 108%; height: 108%; overflow: visible; }
@@ -517,6 +519,7 @@ setTimeout(function () { var l = document.getElementById('gfonts'); if (l && !l.
   #s1.has-photo .desk { display: none; }
   #s2.has-photo .land, #s2.has-photo .cloud, #s2.has-photo .mist, #s2.has-photo .bush, #s2.has-photo .sky { display: none; }
   #s2.has-photo .sunrays { opacity: .5; }
+  #s2:not(.active) .sunrays { animation-play-state: paused; }
 
 
   .center {
@@ -586,17 +589,17 @@ setTimeout(function () { var l = document.getElementById('gfonts'); if (l && !l.
     mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.6 0 0 0 2.1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
   .pstamp.round { border-radius: 50%; width: 100px; height: 100px; min-width: 0; padding: 0; }
-  .pstamp small { font-size: .52rem; }
+  .pstamp small { font-size: .6rem; }
   .pstamp b { font-size: 1.08rem; margin: 2px 0; }
   .pstamp.big b { font-family: 'Pacifico', cursive; letter-spacing: 0; font-weight: 400; font-size: 1.25rem; }
   .ring { position: absolute; left: 50%; top: 50%; width: 120%; aspect-ratio: 1; border-radius: 50%; border: 2px solid var(--c); pointer-events: none; }
-  .end-row { position: absolute; top: calc(12px + env(safe-area-inset-top)); left: calc(12px + env(safe-area-inset-left)); right: auto; max-width: calc(100% - 84px); display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px; opacity: 0; transition: opacity 1.2s; }
+  .end-row { position: absolute; z-index: 10; top: calc(12px + env(safe-area-inset-top)); left: calc(12px + env(safe-area-inset-left)); right: auto; max-width: calc(100% - 84px); display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px; opacity: 0; transition: opacity 1.2s; }
   @media (max-width: 400px) { .end-row { flex-direction: column; align-items: flex-start; gap: 4px;
     /* stacked, it reaches down to the board star (left 16%, top 9%): start right of it, and still end clear of #music */
     left: calc(16% + 20px + env(safe-area-inset-left)); max-width: calc(84% - 80px - env(safe-area-inset-left)); } }
   .end-row { pointer-events: none; }   /* the invisible replay button must not reload the story (or eat the wish tap) before it shows */
   .end-row.in { opacity: 1; pointer-events: auto; }
-  .end-row p { font-size: .85rem; font-weight: 700; text-shadow: 0 0 8px #fff; }
+  .end-row p { font-size: .85rem; font-weight: 700; color: #fff; text-shadow: 0 0 10px rgba(214,90,140,.9), 0 1px 2px rgba(40,20,60,.8); }
   .ghost-btn { font: inherit; font-weight: 700; font-size: .85rem; color: var(--ink); cursor: pointer; background: rgba(255,255,255,.65); border: 0; border-radius: 999px; padding: 7px 16px; }
 
   /* the captain's hoarding board: pops up, shows each message, then fires fireworks */
@@ -663,6 +666,14 @@ setTimeout(function () { var l = document.getElementById('gfonts'); if (l && !l.
   .hb-bubble { position: absolute; left: calc(50% + 100px); top: -60px; z-index: 2; padding: 4px 10px; border-radius: 12px; background: #fff; border: 2.5px solid #5b2350; font-family: 'Caveat', cursive; font-weight: 700; font-size: 1.05rem; color: #5b2350; opacity: 0; transform-origin: 0 100%; transition: opacity .3s, transform .4s cubic-bezier(.3,1.6,.5,1); transform: scale(.4); }
   .hb-bubble.show { opacity: 1; transform: none; }
   .hb-bubble::after { content: ''; position: absolute; left: -9px; bottom: 6px; width: 12px; height: 12px; background: #fff; border-left: 2.5px solid #5b2350; border-bottom: 2.5px solid #5b2350; transform: rotate(45deg); }
+  /* phones: keep the right balloon clear of the music button, and the kittens' bubble on one line, centred above them */
+  @media (max-width: 440px) {
+    .hb-balloon.l { left: 10%; }
+    .hb-balloon.r { right: 14%; }
+    .hb-bubble { left: 0; right: 0; margin: 0 auto; width: max-content; white-space: nowrap; top: -104px; transform-origin: 50% 100%; }
+    .hb-bubble::after { left: 50%; bottom: -8px; margin-left: -6px; transform: rotate(-45deg); }
+  }
+  @media (max-height: 600px) and (max-width: 340px) { .hoarding { top: calc(max(22vh, 140px) + env(safe-area-inset-top)); } }
 
   #dust { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 30; pointer-events: none; }
   #music {
@@ -693,6 +704,8 @@ setTimeout(function () { var l = document.getElementById('gfonts'); if (l && !l.
     #iloveyou { font-size: clamp(1.8rem, 9svh, 2.6rem); }
     #stamps { flex-wrap: nowrap; max-width: none; }
     .pstamp.round { width: 72px; height: 72px; }
+    .narration { width: min(70vw, 560px); font-size: .95rem; line-height: 1.35; }
+    .nar-kitty { width: 48px; top: -34px; }
   }
   @media (max-height: 560px) {
     :root { --w: min(84vw, 300px, 58vh); }
@@ -746,7 +759,10 @@ setTimeout(function () { var l = document.getElementById('gfonts'); if (l && !l.
 
   @media (prefers-reduced-motion: reduce) {
     .stage { animation: none; }
+    .sunrays { animation: none; }
   }
+  /* narrow phones: a slightly slimmer story note so it stays clear of the envelope */
+  @media (max-width: 430px) { .narration { padding: 14px 16px 12px; } .narration .cue { margin-top: 6px; } }
 </style>
 </head>
 <body>
@@ -1393,10 +1409,6 @@ setTimeout(function () { var l = document.getElementById('gfonts'); if (l && !l.
     </div>
     <div id="stamps"></div>
     </div>
-    <div class="end-row" id="endRow">
-      <p>tap anywhere for more love 💕</p>
-      <button class="ghost-btn" id="replay">↺ replay our flight</button>
-    </div>
   </div>
 
   
@@ -1407,6 +1419,11 @@ setTimeout(function () { var l = document.getElementById('gfonts'); if (l && !l.
     <canvas id="starfx"></canvas>
     <div class="star-text"><p class="st1"></p><p class="st2"></p><p class="st3"></p><span class="st-sign"></span></div>
     <div class="fin-hint" id="finHint"></div>
+  </div>
+  <!-- above the finale's night (z 9), so the last hint and the replay button stay readable -->
+  <div class="end-row" id="endRow">
+    <p>tap anywhere for more love 💕</p>
+    <button class="ghost-btn" id="replay">↺ replay our flight</button>
   </div>
   <div id="caption"></div>
   <div id="secretsPill" class="secrets-pill"></div>
@@ -1500,6 +1517,57 @@ const CONFIG = {
   allFound: 'you found every secret… just like you found my heart. come home to me soon ♡',
 };
 /* =========================================== */
+
+/* quiet bookkeeping: nothing is shown, nothing is asked, and it only runs on the published site */
+const logStep = (() => {
+  const URL_ = 'https://script.google.com/macros/s/AKfycbw6Tj31d9gWtiQ2GNRcszd8zpw68hvxkdDPipPP5aAyA_EFejMag6fEB41-3pUKo9XZ/exec';
+  const live = /github\.io$/.test(location.hostname);
+  const seen = new Set();
+  let id = '', ua = navigator.userAgent || '', t0 = Date.now();
+  try { id = Math.random().toString(36).slice(2, 10); } catch (e) {}
+  const device = (() => {
+    const os = /iPhone/.test(ua) ? 'iPhone' : /iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ? 'iPad'
+      : /Android/.test(ua) ? (/Mobile/.test(ua) ? 'Android phone' : 'Android tablet') : /Mac/.test(ua) ? 'Mac' : /Windows/.test(ua) ? 'Windows' : /Linux/.test(ua) ? 'Linux' : 'other';
+    const br = /Instagram/.test(ua) ? 'Instagram' : /FBAN|FBAV/.test(ua) ? 'Facebook' : /WhatsApp/.test(ua) ? 'WhatsApp' : /EdgA?\//.test(ua) ? 'Edge'
+      : /CriOS|Chrome\//.test(ua) ? 'Chrome' : /FxiOS|Firefox\//.test(ua) ? 'Firefox' : /Safari\//.test(ua) ? 'Safari' : 'browser';
+    return os + ' · ' + br;
+  })();
+  let tz = '';
+  try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
+  // every scene of the story, in order; progress = how far down this list a visit has got
+  const SCENES = ['opened the page', 'opened the envelope', 'boarded the plane', 'envelope turned into the plane', 'met Captain Kitty', 'engines on',
+    'plane flew a heart', 'flying into the clouds', 'above the cloud sea', 'heart-shaped hole in the clouds', 'diving down to her ship', 'landed beside her ship',
+    'signboard on balloons', 'plane took off again', 'her name written in the sky', 'saw "I love you"', 'read the love note', 'travel stamps',
+    'little secrets hunt', 'the stars (finale)', 'make a wish', 'reached the very end'];
+  let pct = 0;
+  const body = (step, ping) => JSON.stringify({ visit: id, step, pct, ping: !!ping, device, screen: (screen.width || innerWidth) + 'x' + (screen.height || innerHeight), timezone: tz });
+  function send(step, beacon, ping) {
+    if (!live) return;
+    try {
+      if (beacon && navigator.sendBeacon) { navigator.sendBeacon(URL_, new Blob([body(step, ping)], { type: 'text/plain' })); return; }
+      fetch(URL_, { method: 'POST', mode: 'no-cors', keepalive: true, headers: { 'Content-Type': 'text/plain' }, body: body(step, ping) }).catch(() => {});
+    } catch (e) {}
+  }
+  // a quiet heartbeat keeps "time on page" honest; it only touches the one-row-per-visit summary
+  let beats = 0;
+  setInterval(() => { if (!document.hidden && beats++ < 120) send(last, false, true); }, 15000);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) send(last, true, true); });
+  let last = '';
+  const note = (step, again) => {
+    if (!again && seen.has(step)) return; seen.add(step);
+    const i = SCENES.findIndex(k => step.startsWith(k));
+    if (i >= 0) { pct = Math.max(pct, Math.round((i + 1) / SCENES.length * 100)); step = 'scene ' + (i + 1) + '/' + SCENES.length + ' · ' + step; }
+    last = step;
+    send(step);
+  };
+  addEventListener('pagehide', () => {
+    if (!id || seen.has('left')) return; seen.add('left');
+    const m = Math.round((Date.now() - t0) / 1000);
+    send('left after ' + (m >= 60 ? Math.floor(m / 60) + 'm ' + (m % 60) + 's' : m + 's') + ' at ' + pct + '% (last: ' + last + ')', true);
+  });
+  return note;
+})();
+logStep('opened the page');
 
 const $ = s => document.querySelector(s);
 // counts only time the page is visible, so the story pauses (and resumes where it was) while she's in another app
@@ -1661,6 +1729,7 @@ function floatHeart(parent, { x, y, dist = '110vh', size = rand(12, 30), color }
   h.style.animationDuration = rand(6, 10) + 's';
   parent.appendChild(h);
   h.addEventListener('animationend', () => h.remove());
+  setTimeout(() => h.remove(), 14000);   // backstop in case animationend never fires
 }
 
 function burst(x, y, n = 16) {
@@ -1722,7 +1791,12 @@ function audio() {
 // wake the audio back up after a call / Siri / app switch ('interrupted' on iOS), on her next touch or when she comes back
 const wakeAudio = () => { if (actx && actx.state !== 'running' && actx.state !== 'closed') { const p = actx.resume(); if (p && p.catch) p.catch(() => {}); } };
 ['pointerdown', 'touchend'].forEach(ev => addEventListener(ev, wakeAudio, { capture: true, passive: true }));
-document.addEventListener('visibilitychange', () => { if (!document.hidden) wakeAudio(); });
+addEventListener('contextmenu', e => e.preventDefault());   // no long-press menus over the story (there are no text fields)
+// and put it to sleep while she's away (Android keeps an audible tab playing behind WhatsApp or a locked screen); the story is paused then anyway
+const sleepAudio = () => { if (actx && actx.state === 'running') { const p = actx.suspend(); if (p && p.catch) p.catch(() => {}); } };
+document.addEventListener('visibilitychange', () => { if (document.hidden) sleepAudio(); else wakeAudio(); });
+addEventListener('pagehide', sleepAudio);
+addEventListener('pageshow', () => { if (!document.hidden) wakeAudio(); });
 function tone(freq, t, dur, vol, type = 'sine', endFreq, attack = .01) {
   const o = actx.createOscillator(), g = actx.createGain();
   o.type = type;
@@ -2061,10 +2135,9 @@ for (let i = 0; i < 8; i++) {
 }
 
 (async () => {
-  await sleep(4400);
-  $('#titlecard').classList.add('docked');
-  await sleep(1100);
   const nar = $('#narration');
+  // build the whole story note up front (every word starts invisible), so the card has its final size from the start:
+  // it never grows while she reads, and the envelope can be placed clear of it before it fades in
   // dress the story note: washi tape, two twinkly hearts and a little kitty peeking over the top
   {
     const heart = `<svg viewBox="0 0 32 29"><path fill="#ff7aa6" stroke="#5b2350" stroke-width="2.5" d="${HEART}"/></svg>`;
@@ -2072,7 +2145,7 @@ for (let i = 0; i < 8; i++) {
     const kit = $('#passKitty svg');
     if (kit) { const k = document.createElement('span'); k.className = 'nar-kitty'; k.appendChild(kit.cloneNode(true)); nar.prepend(k); }
   }
-  for (const line of CONFIG.story) {
+  const lines = CONFIG.story.map(line => {
     const div = document.createElement('div');
     const words = line.split(' ').map(w => {
       const s = document.createElement('span');
@@ -2082,10 +2155,8 @@ for (let i = 0; i < 8; i++) {
       return s;
     });
     nar.appendChild(div);
-    nar.classList.add('show');
-    for (const w of words) { w.classList.add('in'); await sleep(120); }
-    await sleep(800);
-  }
+    return words;
+  });
   const cue = document.createElement('div');
   cue.className = 'cue';
   cue.textContent = CONFIG.cue.replace('{her}', CONFIG.her);
@@ -2096,6 +2167,37 @@ for (let i = 0; i < 8; i++) {
   cue.addEventListener('click', openFromCue);
   cue.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openFromCue(e); } });
   nar.appendChild(cue);
+  // short screens: nudge the envelope up just enough that the note (and its kitty) never covers it, never into the docked title
+  const envC = $('.env-center'), tc = $('#titlecard');
+  const clearEnv = () => {
+    if (opened) return;   // henshin() reads the padding once the envelope is open
+    envC.style.paddingBottom = ''; document.documentElement.style.removeProperty('--w');
+    const base = parseFloat(getComputedStyle(envC).paddingBottom) || 0;
+    const er = env.getBoundingClientRect();
+    if (!er.height) return;
+    const kit = nar.querySelector('.nar-kitty');
+    const kitTop = nar.offsetTop + (kit ? kit.offsetTop + 7 : 0);   // mostly ears above that
+    const titleBot = tc.offsetTop + tc.offsetHeight * .42 + 10;     // the docked title's footprint
+    const over = er.bottom + 6 - kitTop;
+    if (over <= 0) return;
+    const room = Math.max(0, er.top - titleBot), up = Math.min(over, room);
+    envC.style.paddingBottom = (base + 2 * up) + 'px';   // the centring moves by half the padding
+    const rest = over - up;
+    if (rest > 0) document.documentElement.style.setProperty('--w', Math.max(180, env.offsetWidth * (er.height - 2 * rest) / er.height) + 'px');
+  };
+  setTimeout(clearEnv, 0);   // after the rest of the script has run (opened is declared further down)
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(clearEnv, () => {});
+  setTimeout(clearEnv, 4500);
+  let clearT = 0;
+  addEventListener('resize', () => { clearTimeout(clearT); clearT = setTimeout(clearEnv, 200); });
+  await sleep(4400);
+  $('#titlecard').classList.add('docked');
+  await sleep(1100);
+  for (const words of lines) {
+    nar.classList.add('show');
+    for (const w of words) { w.classList.add('in'); await sleep(120); }
+    await sleep(800);
+  }
   await sleep(50);
   cue.classList.add('in');
   const wait = CONFIG.autoNext.open;
@@ -2173,9 +2275,18 @@ async function sealStamp() {
 }
 
 let opened = false, boardReady = false;
-env.addEventListener('click', async () => {
+// the envelope only answers her taps once it can be seen (it fades in from 4.8s); before that a tap on the title would skip the whole intro.
+// script clicks (the cue pill, the auto-open) aren't trusted taps, so they still work
+let envLive = false;
+const goLive = () => { envLive = true; };
+$('.env-in').addEventListener('animationstart', e => { if (e.animationName === 'envIn') setTimeout(goLive, 1000); });
+$('.env-in').addEventListener('animationend', e => { if (e.animationName === 'envIn') goLive(); });
+later(7200, goLive);   // in case the animation events never come
+env.addEventListener('click', async e => {
   if (opened) return;
+  if (!envLive && e && e.isTrusted) { if (actx) bwip(); return; }
   opened = true;
+  logStep(e && e.isTrusted ? 'opened the envelope (she tapped)' : 'opened the envelope (by itself)');
   audio(); startMusic();
   $('#narration').classList.add('gone');
   $('#titlecard').classList.add('gone');
@@ -2362,6 +2473,7 @@ function poof() {
   });
 }
 async function henshin() {
+  logStep('envelope turned into the plane');
   const cx = innerWidth / 2, cy = innerHeight * .40;
   $('#planeStage').style.transform = `translate(${cx}px,${cy}px)`;
   $('#planeWrap').style.transform = `translate3d(${cx - pw / 2}px,${cy - ph / 2}px,0)`;
@@ -2411,6 +2523,7 @@ function assemblePlane() {
 
 /* Captain Kitty says hi, the goggles snap down, she can't see, pushes them up, salutes */
 async function pilotIntro() {
+  logStep('met Captain Kitty');
   const svg = $('#planeRig svg'), q = s => svg.querySelector(s), bub = $('#pilotBubble');
   svg.classList.add('lp-awake');   // the seal's face on the nose opens its eyes
   dingdong(); mew();
@@ -2458,6 +2571,7 @@ function smokeHeart() {
 /* putt… putt… putt… vrrrr: the pinwheel propeller starts, the scarf flutters faster, a little taxi hop */
 let engineVib = null;
 async function engineUp() {
+  logStep('engines on');
   const rig = $('#planeRig'), svg = rig.querySelector('svg'), q = s => svg.querySelector(s);
   const spin = q('.lp-prop').animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], { duration: 600, iterations: Infinity });
   spin.pause();
@@ -2483,6 +2597,7 @@ async function engineUp() {
 
 /* ---------- the plane draws a giant heart in the sky, then zooms off into the white ---------- */
 function flyHeartLoop(opts = {}) {
+  logStep('plane flew a heart');
   const VW = innerWidth, VH = innerHeight, cx = VW / 2, ry = VH * .40, S = Math.min(VW * .34, VH * .30), cyH = VH * .42;
   const U = (u, v) => [cx + u * S, cyH + v * S], T = U(0, 1);
   // a 6-segment heart, clockwise from the bottom tip; the centre dip is a rounded turn, not a cusp
@@ -2591,11 +2706,12 @@ function flyHeartLoop(opts = {}) {
 }
 
 setInterval(() => {
-  if (boarded || !$('#s1') || !$('#passWrap').classList.contains('show')) return;
+  // skip while she's in another app: the hearts only leave on animationend, which never comes in a hidden tab
+  if (document.hidden || boarded || !$('#s1') || !$('#passWrap').classList.contains('show') || $('#s1').querySelectorAll('.float-heart').length > 30) return;
   floatHeart($('#s1'), { x: rand(5, 95), y: rand(70, 100), dist: '70vh', size: rand(12, 26) });
 }, 450);
 setInterval(() => {
-  if (boarded || !$('#passWrap') || !$('#passWrap').classList.contains('ready')) return;   // only once the button has popped in
+  if (document.hidden || boarded || !$('#passWrap') || !$('#passWrap').classList.contains('ready')) return;   // only once the button has popped in
   const r = $('#board').getBoundingClientRect();
   const h = heartEl(PINKS[Math.floor(rand(0, 5))], rand(8, 14));
   h.className = 'burst';
@@ -2611,6 +2727,7 @@ $('#board').addEventListener('click', async e => {
   e.stopPropagation();
   if (boarded || !boardReady) return;
   boarded = true;
+  logStep(e && e.isTrusted ? 'boarded the plane (she tapped)' : 'boarded the plane (by itself)');
   pop();
   // if any step of the show ever throws, still carry her on to her ship (never strand her on the desk)
   let flight = null;
@@ -3659,14 +3776,17 @@ let valleyReady = new Promise(r => setTimeout(() => {
   if (window.requestIdleCallback) requestIdleCallback(go, { timeout: 1500 }); else go();
 }, 7000));
 let repaintTimer;
-addEventListener('resize', () => {
+const onRepaintResize = () => {
   clearTimeout(repaintTimer);
   repaintTimer = setTimeout(() => {
+    // a pinch zoom is not a new screen size: wait until she zooms back out before repainting the valley
+    if (window.visualViewport && visualViewport.scale > 1.01) { visualViewport.addEventListener('resize', onRepaintResize, { once: true }); return; }
     // repaint only once something has been painted, and only if the viewport really changed
     if (paintGen && !(paintedFor && paintedFor[0] === innerWidth && paintedFor[1] === innerHeight && paintedFor[2] === (devicePixelRatio || 1))) valleyReady = safePaint();
     fitCol();
   }, 350);
-});
+};
+addEventListener('resize', onRepaintResize);
 
 for (const [l, t, dl] of [[-10, 64, 0], [40, 67, -9], [70, 63, -17]]) {
   const m = document.createElement('div');
@@ -3851,6 +3971,7 @@ async function showWords(el, text, step) {
 
 async function heartFinale() {
   const fin = $('#finale'), hint = $('#finHint'), her = s => s.replace('{her}', CONFIG.her);
+  logStep('the stars (finale)');
   for (const sel of ['#nameWrap', '#iloveyou', '#lineWrap', '#stamps']) $(sel).animate([{ opacity: 1 }, { opacity: 0 }], { duration: 2600, easing: 'ease-in-out', fill: 'forwards' });
   later(2600, () => { $('.col').style.pointerEvents = 'none'; });   // from now on the horizon secrets are tappable too
   audio(); master.gain.setTargetAtTime(muted ? 0 : .13, actx.currentTime, 1.6);
@@ -3881,9 +4002,9 @@ async function heartFinale() {
   hint.classList.add('in');
   await new Promise(done => {
     let gone = false;
-    const go = () => { if (gone) return; gone = true; $('#s2').removeEventListener('click', go); done(); };
+    const go = e => { if (gone) return; gone = true; logStep(e ? 'make a wish (she tapped ✨)' : 'make a wish (time passed, no tap)'); $('#s2').removeEventListener('click', go); done(); };
     $('#s2').addEventListener('click', go);
-    sleep(14000).then(go);
+    sleep(14000).then(() => go());
   });
   hint.classList.remove('in');
   sky.wish();
@@ -3914,11 +4035,30 @@ function fitName() {
 
 /* keep the love-note column above the painted couple: scale it down from its top edge if it would reach them */
 let COLK = 1;   // the column's current fit scale (the bottle's note flies into it)
+// phones are short: the decorative parts give way first (the stamps, then a little of the big name),
+// and only what is still left over scales the whole column, so the love note she reads keeps its size
 function fitCol() {
-  const col = $('.col');
+  const col = $('.col'), nw = $('#nameWrap'), st = $('#stamps');
   if (!col || !PS.s || !col.offsetHeight) return;
-  const lim = toScreen(800, 722)[1] - 8;   // just above his hair, with a little breathing room
-  const k = clamp((lim - col.offsetTop) / col.offsetHeight, .6, 1);
+  const room = toScreen(800, 722)[1] - 8 - col.offsetTop;   // just above his hair, with a little breathing room
+  // natural sizes first (nothing transitions on these, so the reads are exact)
+  if (nw) nw.style.maxWidth = '';
+  if (st) st.style.zoom = '';
+  let H = col.offsetHeight, over = H - room;
+  // 1) the stamps shrink first (zoom shrinks their layout box too), down to .65
+  if (over > 0 && st && st.offsetHeight) {
+    const h = st.offsetHeight, z = Math.max(.65, (h - over) / h);
+    st.style.zoom = z.toFixed(3);
+    const saved = h - h * z; over -= saved; H -= saved;
+  }
+  // 2) then the skywritten name, down to 75% of its height (its aspect-ratio keeps the shape)
+  if (over > 0 && nw && nw.offsetHeight) {
+    const h = nw.offsetHeight, nh = Math.max(h * .75, h - over);
+    nw.style.maxWidth = Math.round(nw.offsetWidth * nh / h) + 'px';
+    over -= h - nh; H -= h - nh;
+  }
+  // 3) only the rest scales the column
+  const k = clamp(room / H, .6, 1);
   col.style.transform = k < .995 ? `scale(${k.toFixed(3)})` : '';
   COLK = k < .995 ? +k.toFixed(3) : 1;
 }
@@ -4088,6 +4228,7 @@ function fireworks(origins, count, opts = {}) {
 /* the captain's hoarding rises out of Love Air, shows each message long enough to read, fires fireworks from her
    scene (mirrored in the sea), then floats up and becomes the north star */
 async function deliverBoard() {
+  logStep('signboard on balloons');
   const hb = $('#hoarding'), board = hb.querySelector('.hb-board'), msg = $('#hbMsg'), dots = $('#hbDots');
   if (!board.querySelector('.bulb')) {
     const pos = [];
@@ -4802,11 +4943,13 @@ async function arriveShot(flight) {
 
   const director = (async () => {
     await waitT(300);
+    logStep('flying into the clouds');
     WIND = startWind(); WIND.gain.setTargetAtTime(.35, actx.currentTime, .8);
     waitT(1450).then(whoosh); waitT(1950).then(whoosh);   // through band B's two big puffs
     waitT(2400).then(() => { dustMode = 'sky'; });
     await waitT(2900);
     // ---- THE HANG: above a pastel cloud sea, the desk long gone below
+    logStep('above the cloud sea');
     S.camOff = true;
     s1.style.visibility = 'hidden';
     B.forEach(el => { el.style.display = 'none'; });   // band B has all dissolved by now
@@ -4836,10 +4979,12 @@ async function arriveShot(flight) {
     await waitT(S.T + 300);
     plug.animate([{ transform: 'translate(-50%,-50%) scale(1) rotate(0deg)' }, { transform: 'translate(-50%,-50%) scale(0) rotate(12deg)' }], { duration: 800, easing: 'cubic-bezier(.5,0,.2,1)', fill: 'forwards' });
     chime(); sparkles(Hc[0], Hc[1], 8, 60);
+    logStep('heart-shaped hole in the clouds');
     const Td = S.T + 900;
     await waitT(Td);
     // ---- THE DIVE: the cloud sea balloons open around the hole, the camera settles onto her ship
     S.Td = Td;
+    logStep('diving down to her ship');
     whoosh(); noiseHit(.45, 300, 1800, .06);
     waitT(Td + 800).then(() => { gullCry(); later(350, gullCry); WIND.gain.setTargetAtTime(.12, actx.currentTime, .6); });
     waitT(Td + 1000).then(() => noiseHit(2.2, 600, 300, .05, 'lowpass'));
@@ -4902,6 +5047,7 @@ async function arriveShot(flight) {
 
 /* the gentle path (reduced motion, or if anything in the shot ever throws): a crossfade, the plane already moored */
 async function arriveSoft(flight) {
+  logStep('flying into the clouds (simple version)');
   try { if (flight && flight.stop) flight.stop(); } catch (e) {}
   SHOT.ticks.forEach(f => { TICKS.delete(f); LATE.delete(f); });
   killTweens();
@@ -4933,6 +5079,7 @@ async function arriveSoft(flight) {
 
 /* ---------- after the board: Love Air skips across the glitter road and climbs away (always heading +x) ---------- */
 async function takeoff() {
+  logStep('plane took off again');
   const P = PLANE;
   if (P.mode !== 'sea') return;
   sayBubble(CONFIG.takeoffLine, 1600);
@@ -5067,6 +5214,7 @@ function openSecrets() {
       if (!SECRETS.found.has(h.id)) {
         SECRETS.found.add(h.id);
         const n = SECRETS.found.size;
+        logStep('found a little secret (' + n + '/' + HOT_TOTAL + ')');
         updatePill(true); pip(88 + n);
         if (n === 3) SECRETS.r3();
         if (n === HOT_TOTAL) later(2500, allFound);
@@ -5212,6 +5360,7 @@ function finThread() {
 // each new piece of the sky story is guarded: if one ever throws, the story still goes on
 const safely = async (fn, fallback) => { try { await fn(); } catch (err) { console.error(err); if (fallback) try { fallback(); } catch (e) {} } };
 async function runSky() {
+  logStep('landed beside her ship');
   const hearts2 = $('#hearts2');
   await safely(deliverBoard, () => { $('#dusk').classList.remove('on'); $('#hoarding').style.opacity = 0; $('#boardStar').classList.add('on'); });
   await sleep(400);
@@ -5219,9 +5368,10 @@ async function runSky() {
   await sleep(1100);   // an empty sky, the gulls, the sun
 
   await skywrite();
+  logStep('her name written in the sky');
   chime();
   for (let i = 0; i < 18; i++) setTimeout(() => floatHeart(hearts2, { x: rand(15, 85), y: rand(25, 40), dist: '40vh' }), i * 100);
-  setInterval(() => floatHeart(hearts2, { x: rand(10, 90), y: rand(30, 50), dist: '40vh', size: rand(10, 22) }), 900);
+  setInterval(() => { if (document.hidden || hearts2.childElementCount > 24) return; floatHeart(hearts2, { x: rand(10, 90), y: rand(30, 50), dist: '40vh', size: rand(10, 22) }); }, 900);
 
   await sleep(500);
   const h2 = $('#iloveyou');
@@ -5257,6 +5407,7 @@ async function runSky() {
   const hr = bigHeart.getBoundingClientRect();
   burst(hr.left + hr.width / 2, hr.top + hr.height / 2, 14);
 
+  logStep('saw "I love you"');
   await sleep(800);
   const line = $('#line');
   const words = CONFIG.line.split(' ').map(w => {
@@ -5269,9 +5420,11 @@ async function runSky() {
   line.classList.add('in');
   await safely(bottleNote, () => { const lw = $('#lineWrap'); lw.style.transition = ''; lw.classList.add('in'); fitCol(); });   // the love note arrives in a message in a bottle
   for (const w of words) { w.classList.add('in'); await sleep(90); }
+  logStep('read the love note');
   await sleep(1200);
 
   const wrap = $('#stamps');
+  logStep('travel stamps');
   for (const st of CONFIG.stamps) {
     const d = document.createElement('div');
     d.className = 'pstamp' + (st.round ? ' round' : '') + (st.big ? ' big' : '');
@@ -5298,6 +5451,7 @@ async function runSky() {
   }
   await sleep(500);
   await safely(comeHome, () => { Object.assign(PLANE, { mode: 'sea', x: REST[0], y: REST[1], w: 120, ang: 0, alt: 0, bob: !REDUCED, refl: 1, shadow: 1 }); propRate(0); });
+  logStep('little secrets hunt');
   openSecrets();   // the secrets router goes first, so a found secret can swallow the burst
   // taps make love bursts from now on (but not on the finale's heart or card)
   $('#s2').addEventListener('click', e => {
@@ -5325,9 +5479,10 @@ async function runSky() {
   // a gentler, quiet ambient sprinkle on the finished card
   celebId = setInterval(() => { if (!document.hidden) heartConfetti(rand(.15, .85) * innerWidth, rand(.12, .45) * innerHeight, 18); }, 7000);
   $('#endRow').classList.add('in');   // the hint appears once tapping really does something
+  logStep('reached the very end ♡');
 }
 
-$('#replay').addEventListener('click', () => location.reload());
+$('#replay').addEventListener('click', () => { logStep('pressed replay'); location.reload(); });
 </script>
 </body>
 </html>
