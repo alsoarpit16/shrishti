@@ -1445,7 +1445,8 @@ setTimeout(function () { var l = document.getElementById('gfonts'); if (l && !l.
 const CONFIG = {
   her: 'Shrishti',
   // if she doesn't tap, the story carries on by itself after this long (milliseconds)
-  autoNext: { open: 5000, board: 5000 },
+  // the story carries itself along (ms): no tap is ever needed, but a tap still works
+  autoNext: { open: 1500, board: 2500, wish: 3500, secrets: 10000, tapHints: false },
   titleSub: '~ my love, sailing to you ~',
   story: [
     'Somewhere far out at sea, my favourite girl is sailing… 🌊',
@@ -2199,7 +2200,7 @@ for (let i = 0; i < 8; i++) {
     await sleep(800);
   }
   await sleep(50);
-  cue.classList.add('in');
+  if (CONFIG.autoNext.tapHints) cue.classList.add('in');
   const wait = CONFIG.autoNext.open;
   sleep(Math.max(0, wait - 1500)).then(() => {   // a little nudge, then open it for her
     if (opened) return;
@@ -2338,7 +2339,12 @@ env.addEventListener('click', async e => {
   await sleep(1300);
   $('#passWrap').classList.add('ready');
   boardReady = true;
-  sleep(CONFIG.autoNext.board).then(() => { if (!boarded && $('#board')) $('#board').click(); });   // carry on as if she tapped
+  sleep(CONFIG.autoNext.board).then(() => {   // carry on as if she tapped: a little press, then off we go
+    const b = $('#board');
+    if (boarded || !b) return;
+    b.animate([{ transform: 'none' }, { transform: 'scale(.93)' }, { transform: 'none' }], { duration: 260, easing: 'ease-out' });
+    sleep(200).then(() => { if (!boarded) b.click(); });
+  });
 });
 
 let passTexURL = null;   // kept so the hand-off cleanup line still runs (it stays null now)
@@ -4004,7 +4010,7 @@ async function heartFinale() {
     let gone = false;
     const go = e => { if (gone) return; gone = true; logStep(e ? 'make a wish (she tapped ✨)' : 'make a wish (time passed, no tap)'); $('#s2').removeEventListener('click', go); done(); };
     $('#s2').addEventListener('click', go);
-    sleep(14000).then(() => go());
+    sleep(CONFIG.autoNext.wish).then(() => go());
   });
   hint.classList.remove('in');
   sky.wish();
@@ -5472,7 +5478,7 @@ async function runSky() {
   await sleep(4500);
   clearInterval(celebId);
   sayBubble(her(CONFIG.secretsHint).replace('{total}', HOT_TOTAL), 3200);
-  await Promise.race([SECRETS.three, sleep(24000)]);   // let her play before the stars
+  await Promise.race([SECRETS.three, sleep(CONFIG.autoNext.secrets)]);   // a moment to play before the stars (the secrets stay tappable after)
   SECRETS.paused = true;
   await safely(heartFinale);   // a throw in the finale must not leave the secrets paused forever
   SECRETS.paused = false;
