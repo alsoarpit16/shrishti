@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <script>/* slow ship internet: if the font sheet hasn't arrived in 3s, stop it blocking the first paint (it still applies when it lands) */
 setTimeout(function () { var l = document.getElementById('gfonts'); if (l && !l.dataset.ok) l.media = 'print'; }, 3000);</script>
-<link id="gfonts" onload="this.dataset.ok = 1; this.media = 'all'" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Caveat:wght@600;700&family=Fredoka:wght@500;600;700&family=Dancing+Script:wght@600;700&family=Pacifico&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link id="gfonts" onload="this.dataset.ok = 1; this.media = 'all'" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Caveat:wght@600;700&family=Sniglet:wght@400;800&family=Fredoka:wght@500;600;700&family=Dancing+Script:wght@600;700&family=Pacifico&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --pink: #ff5d8f;
@@ -122,14 +122,48 @@ setTimeout(function () { var l = document.getElementById('gfonts'); if (l && !l.
   .narration {
     position: absolute; left: 50%; bottom: calc(5vh + env(safe-area-inset-bottom)); transform: translateX(-50%);
     z-index: 12; width: min(92vw, 760px); text-align: center; pointer-events: none;
-    font-family: 'Cormorant Garamond', serif; font-weight: 600;
-    font-size: clamp(1.02rem, 2.6vw, 1.42rem); letter-spacing: .07em; line-height: 1.55;
-    color: #fff4e0; text-shadow: 0 0 10px rgba(0,0,0,.85), 0 0 22px rgba(255,180,100,.35);
-    transition: opacity .8s;
+    font-family: 'Sniglet', 'Fredoka', 'Chalkboard SE', 'Comic Sans MS', 'Quicksand', sans-serif; font-weight: 400;
+    font-size: clamp(1.02rem, 2.6vw, 1.32rem); letter-spacing: .015em; line-height: 1.55;
+    color: #5b2350; text-shadow: 0 1.5px 0 rgba(255,255,255,.9);
+    padding: 18px 22px 16px; border-radius: 24px;
+    background: linear-gradient(rgba(255,251,253,0), rgba(255,240,247,0));
+    box-shadow: 0 0 0 3px rgba(91,35,80,0), 0 7px 0 3px rgba(91,35,80,0), 0 18px 32px rgba(90,40,100,0);
+    transform: translateX(-50%) translateY(10px) scale(.97);
+    transition: opacity .8s, background .9s ease, box-shadow .9s ease, transform .9s cubic-bezier(.3,1.5,.5,1);
   }
+  /* a cute little story note: cartoon outline, stitched border, washi tape, a peeking kitty */
+  .narration::before { content: ''; position: absolute; inset: 7px; border-radius: 17px; border: 2px dashed rgba(255,143,179,.7); opacity: 0; transition: opacity .9s ease; }
+  .narration.show {
+    background: linear-gradient(#fffbfd, #fff0f7);
+    box-shadow: 0 0 0 3px #5b2350, 0 7px 0 3px #5b2350, 0 18px 32px rgba(90,40,100,.28);
+    transform: translateX(-50%);
+  }
+  .narration.show::before { opacity: 1; }
+  /* the sweetest words pop like cartoon stickers: pink fill, plum outline, a little drop */
+  .narration .hl { color: #ff6f9f; font-weight: 800; letter-spacing: .02em; text-shadow: -1.2px -1.2px 0 #5b2350, 1.2px -1.2px 0 #5b2350, -1.2px 1.2px 0 #5b2350, 1.2px 1.2px 0 #5b2350, 0 -1.4px 0 #5b2350, 0 1.4px 0 #5b2350, -1.4px 0 0 #5b2350, 1.4px 0 0 #5b2350, 0 3px 0 #5b2350; }
+  .nar-tape { position: absolute; z-index: 2; opacity: 0; transition: opacity .6s ease .3s; }
+  .narration.show .nar-tape { opacity: 1; }
+  .nar-tape.a { right: 16px; top: -9px; width: 70px; transform: rotate(8deg); }
+  .nar-tape.b { left: -10px; bottom: 14px; width: 54px; transform: rotate(-58deg); }
+  .nar-kitty { position: absolute; left: 22px; top: -47px; width: 64px; z-index: 3; opacity: 0; transform: translateY(18px) scale(.8); transition: opacity .5s ease .5s, transform .7s cubic-bezier(.3,1.7,.5,1) .5s; }
+  .nar-kitty svg { display: block; width: 100%; overflow: visible; }
+  .nar-kitty .eye { transform-box: fill-box; transform-origin: center; animation: blink 3.6s infinite; }
+  .narration.show .nar-kitty { opacity: 1; transform: none; }
+  .nar-heart { position: absolute; width: 14px; z-index: 2; opacity: 0; transition: opacity .6s ease .6s; }
+  .narration.show .nar-heart { opacity: 1; animation: twinkle 2s ease-in-out infinite; }
+  .nar-heart.a { right: -7px; top: 34%; }
+  .nar-heart.b { left: 42%; bottom: -8px; width: 11px; animation-delay: -1s; }
   .narration.gone { opacity: 0; }
-  .narration .cue { margin-top: 10px; font-family: 'Cinzel', serif; font-size: .8em; letter-spacing: .25em; color: #ffd98e; opacity: 0; transition: opacity 1.2s; }
-  .narration .cue.in { opacity: 1; animation: cuePulse 2.2s ease-in-out infinite; }
+  .narration .cue {
+    display: inline-block; margin-top: 12px; padding: 7px 18px 6px; border-radius: 999px;
+    font-family: 'Sniglet', 'Fredoka', 'Chalkboard SE', 'Comic Sans MS', 'Quicksand', sans-serif; font-weight: 800; font-size: .9em; letter-spacing: .04em;
+    color: #fff; background: linear-gradient(#ffa6c4, #ff7fab); border: 2.5px solid #5b2350; box-shadow: 0 3px 0 #5b2350, inset 0 2px 0 rgba(255,255,255,.55);
+    text-shadow: -1px -1px 0 #5b2350, 1px -1px 0 #5b2350, -1px 1px 0 #5b2350, 1px 1px 0 #5b2350, 0 2px 0 #5b2350; opacity: 0; transition: opacity 1.2s;
+  }
+  .narration .cue.in { opacity: 1; animation: cueBob 1.8s ease-in-out infinite; pointer-events: auto; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  .narration .cue.in:active { animation: none; transform: translateY(3px) scale(.96); box-shadow: 0 0 0 #5b2350, inset 0 2px 0 rgba(255,255,255,.55); }
+  .narration.gone .cue { pointer-events: none; }
+  @keyframes cueBob { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-4px) scale(1.04); } }
   @keyframes cuePulse { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
 
   /* envelope */
@@ -1393,6 +1427,8 @@ setTimeout(function () { var l = document.getElementById('gfonts'); if (l && !l.
 /* ======= edit these to make it yours ======= */
 const CONFIG = {
   her: 'Shrishti',
+  // if she doesn't tap, the story carries on by itself after this long (milliseconds)
+  autoNext: { open: 5000, board: 5000 },
   titleSub: '~ my love, sailing to you ~',
   story: [
     'Somewhere far out at sea, my favourite girl is sailing… 🌊',
@@ -2029,25 +2065,45 @@ for (let i = 0; i < 8; i++) {
   $('#titlecard').classList.add('docked');
   await sleep(1100);
   const nar = $('#narration');
+  // dress the story note: washi tape, two twinkly hearts and a little kitty peeking over the top
+  {
+    const heart = `<svg viewBox="0 0 32 29"><path fill="#ff7aa6" stroke="#5b2350" stroke-width="2.5" d="${HEART}"/></svg>`;
+    nar.insertAdjacentHTML('afterbegin', `<span class="tape nar-tape a"></span><span class="tape mint nar-tape b"></span><span class="nar-heart a">${heart}</span><span class="nar-heart b">${heart}</span>`);
+    const kit = $('#passKitty svg');
+    if (kit) { const k = document.createElement('span'); k.className = 'nar-kitty'; k.appendChild(kit.cloneNode(true)); nar.prepend(k); }
+  }
   for (const line of CONFIG.story) {
     const div = document.createElement('div');
     const words = line.split(' ').map(w => {
       const s = document.createElement('span');
-      s.className = 'w';
+      s.className = /sea|love|letter|ship|heart|smil|sail/i.test(w) ? 'w hl' : 'w';
       s.textContent = w;
       div.append(s, ' ');
       return s;
     });
     nar.appendChild(div);
+    nar.classList.add('show');
     for (const w of words) { w.classList.add('in'); await sleep(120); }
     await sleep(800);
   }
   const cue = document.createElement('div');
   cue.className = 'cue';
   cue.textContent = CONFIG.cue.replace('{her}', CONFIG.her);
+  // the pill is a real button too: tapping it opens the envelope
+  cue.setAttribute('role', 'button');
+  cue.tabIndex = 0;
+  const openFromCue = e => { e.stopPropagation(); if (!nar.classList.contains('gone')) env.click(); };
+  cue.addEventListener('click', openFromCue);
+  cue.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openFromCue(e); } });
   nar.appendChild(cue);
   await sleep(50);
   cue.classList.add('in');
+  const wait = CONFIG.autoNext.open;
+  sleep(Math.max(0, wait - 1500)).then(() => {   // a little nudge, then open it for her
+    if (opened) return;
+    env.animate([{ transform: 'none' }, { transform: 'rotate(-4deg) scale(1.03)' }, { transform: 'rotate(4deg) scale(1.03)' }, { transform: 'rotate(-2deg)' }, { transform: 'none' }], { duration: 700, easing: 'ease-in-out' });
+  });
+  sleep(wait).then(() => { if (!opened) env.click(); });
 })();
 
 /* ---------- the sleepy wax seal wakes up when she taps ---------- */
@@ -2171,6 +2227,7 @@ env.addEventListener('click', async () => {
   await sleep(1300);
   $('#passWrap').classList.add('ready');
   boardReady = true;
+  sleep(CONFIG.autoNext.board).then(() => { if (!boarded && $('#board')) $('#board').click(); });   // carry on as if she tapped
 });
 
 let passTexURL = null;   // kept so the hand-off cleanup line still runs (it stays null now)
